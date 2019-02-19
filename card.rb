@@ -9,6 +9,7 @@ class Card
 
   def face_up
     @face_down = false
+    self
   end
 
   def ace?
