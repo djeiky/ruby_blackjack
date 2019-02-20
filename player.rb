@@ -1,6 +1,5 @@
 require_relative 'hand.rb'
 class Player
-
   attr_reader :name, :money, :bet, :hand
 
   START_MONEY = 100
@@ -9,6 +8,10 @@ class Player
     @name = name
     @hand = Hand.new
     @money = START_MONEY
+  end
+
+  def clear_hand
+    @hand = Hand.new
   end
 
   def take_card(card)
@@ -25,9 +28,8 @@ class Player
   end
 
   def show_hand
-    @hand.show
+    @hand
   end
 
   alias win_bank take_bet_back
-
 end

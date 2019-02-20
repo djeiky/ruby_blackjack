@@ -1,5 +1,5 @@
 class Card
-  attr_reader :face, :suit
+  attr_reader :face, :suit, :face_down
 
   def initialize(face, suit)
     @face = face
@@ -19,13 +19,12 @@ class Card
   def value
     case @face
     when 2..10 then @face
-    when 'J','Q','K' then 10
+    when 'J', 'Q', 'K' then 10
     when 'A' then 1
     end
   end
 
   def to_s
-    @face_down ? "*" : "#{@face}#{@suit}"
+    @face_down ? '*' : "#{@face}#{@suit}"
   end
 end
-
