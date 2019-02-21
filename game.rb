@@ -1,19 +1,19 @@
 require_relative 'deck.rb'
 require_relative 'player.rb'
 require_relative 'dealer.rb'
+require_relative 'interface.rb'
 
 class Game
   BET = 10
 
   def initialize
+    @interface = Interface.new
     @player = new_player
     @dealer = Dealer.new
   end
 
   def new_player
-    print 'Enter your name - '
-    name = gets.chomp
-    name = name.empty? ? 'Player' : name
+    name = @interface.take_name
     Player.new(name)
   end
 
@@ -24,19 +24,14 @@ class Game
       end_round
 
       if @player.money < BET
-        puts 'Not enought money'
+        @interface.no_money
         break
       end
 
-      puts 'You won everything' if @dealer.money < BET
+      @interface.everything_win  if @dealer.money < BET
 
-      return unless continue_game?
+      return unless @interface.continue_game?
     end
-  end
-
-  def game_status
-    puts "Dealer hand - #{@dealer.hand} Money - #{@dealer.money}"
-    puts "Player #{@player.name} hand - #{@player.hand} Money - #{@player.money}"
   end
 
   def start_round
@@ -52,8 +47,8 @@ class Game
 
   def make_moves
     loop do
-      game_status
-      case player_choice
+      @interface.print_player(@player)
+      case @interface.player_choice
       when 2 then @player.take_card(@deck.deal_card.face_up)
       when 3 then
         @dealer.take_card(@deck.deal_card)
@@ -66,33 +61,20 @@ class Game
     end
   end
 
-  def player_choice
-    puts 'check - 1'
-    puts 'take card - 2'
-    puts 'open - 3'
-    gets.to_i
-  end
-
-  def continue_game?
-    puts 'Continue - 1'
-    puts 'Exit - 2'
-    choice = gets.to_i
-    choice == 1
-  end
 
   def end_round
     @dealer.show_hand
-    game_status
+    @interface.game_status([@dealer, @player])
     winner = get_winner
     if winner
-      puts "Winer - #{winner.name}"
+      @interface.print_winner(winner)
       winner.win_bank(@player.bet + @dealer.bet)
     else
-      puts 'Nobody win'
+      @interface.print_draw
       @player.take_bet_back(@player.bet)
       @dealer.take_bet_back(@player.bet)
     end
-    game_status
+    @interface.balance_status([@dealer, @player])
   end
 
   def get_winner
